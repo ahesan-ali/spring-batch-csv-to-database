@@ -1,15 +1,24 @@
 package com.howtodoinjava.demo.model;
- 
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name="EMPLOYEE")
+@EntityListeners(AuditingEntityListener.class)
 public class Employee {
- 
-    String id;
+
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+    Long id;
     String firstName;
     String lastName;
     
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getFirstName() {
