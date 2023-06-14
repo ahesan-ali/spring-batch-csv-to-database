@@ -15,6 +15,7 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -23,11 +24,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import com.howtodoinjava.demo.model.Employee;
- 
+import org.springframework.web.reactive.function.client.WebClient;
+
 @Configuration
 @EnableBatchProcessing
 public class BatchConfig {
@@ -44,7 +47,12 @@ public class BatchConfig {
     @Autowired
     @Lazy
     private EmployeeRepository employeeRepository;
- 
+
+    /*@Bean
+    public WebClient webClient(WebClient.Builder builder) {
+        return builder.build();
+    }*/
+
     @Bean
     public Job readCSVFileJob() {
         return jobBuilderFactory
@@ -69,7 +77,8 @@ public class BatchConfig {
     public ItemProcessor<Employee, Employee> processor() {
         return new DBLogProcessor();
     }
-     
+
+
     @Bean
     public FlatFileItemReader<Employee> reader() {
         FlatFileItemReader<Employee> itemReader = new FlatFileItemReader<Employee>();
@@ -83,14 +92,15 @@ public class BatchConfig {
     public LineMapper<Employee> lineMapper() {
         DefaultLineMapper<Employee> lineMapper = new DefaultLineMapper<Employee>();
         DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
-        lineTokenizer.setNames(new String[] { "firstName", "lastName" });
-        lineTokenizer.setIncludedFields(new int[] { 0, 1});
+        lineTokenizer.setNames(new String[] { "firstName", "accountNumber" });
+        lineTokenizer.setIncludedFields(new int[] { 1, 3});
         BeanWrapperFieldSetMapper<Employee> fieldSetMapper = new BeanWrapperFieldSetMapper<Employee>();
         fieldSetMapper.setTargetType(Employee.class);
         lineMapper.setLineTokenizer(lineTokenizer);
         lineMapper.setFieldSetMapper(fieldSetMapper);
         return lineMapper;
     }
+
  
     @Bean
     public RepositoryItemWriter<Employee> writer() {

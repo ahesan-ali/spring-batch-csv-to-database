@@ -14,7 +14,8 @@ public class Employee {
     Long id;
     String firstName;
     String lastName;
-    
+	Long accountNumber;
+
 	public Long getId() {
 		return id;
 	}
@@ -33,6 +34,14 @@ public class Employee {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	public Long getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(Long accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
 	@Override
 	public String toString() {
 		return "Employee [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "]";
